@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
-  const [counter, setCounter] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
+  const [pausebtn , setPausebtn] = useState(false)
+  const [disable , setDisable] = useState(false)
 
   function changeInput(e) {
     setInputValue(parseInt(e.target.value));
@@ -12,49 +13,48 @@ function App() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    
+    if (!intervalId && inputValue > 0 ) {
+      setDisable(true)
+      const id = setInterval(() => {
+        console.log("vinay jain")
+        setInputValue((prevValue) => (prevValue > 0 ? prevValue - 1 :  clearInterval(intervalId)));
+      }, 1000);
+      setIntervalId(id);
+      console.log(id)
+    }
+    else  if( inputValue === 0){
+      setDisable(false)
+      
+      // clearInterval(inputValue)
+      clearInterval(id)
 
-
-    // let timer;
-    // if (counter > 0 && !paused) {
-    //   timer = setInterval(() => {
-    //     setCounter((prevCounter) => {
-    //       const newCounter = prevCounter - 1;
-    //       if (newCounter <= 0) {
-    //         clearInterval(timer);
-    //         return 0;
-    //       }
-    //       return newCounter;
-    //     });
-    //   }, 1000);
-    // }
-
-    // return () => clearInterval(timer);
-
-    setCounter(inputValue);
-    setPaused(false);
+    }
+    
+  }
+  function handlePause() {
+    if (intervalId && !pausebtn) { 
+      clearInterval(intervalId);
+      setPausebtn(true);
+    } else if (inputValue > 0 && pausebtn) { 
+      const id = setInterval(() => {
+        setInputValue((prevValue) => (prevValue > 0 ? prevValue - 1 : prevValue));
+      }, 1000);
+      setIntervalId(id);
+      setPausebtn(false);
+    }
   }
 
-  // function handlePause() {
-  //   setPaused(!paused); 
-  // }
+    useEffect(() => {
+      return () => {
+        if(intervalId){
+          clearInterval(intervalId ,inputValue);
+        }
+       
+      };
+    }, [intervalId]);
 
-  useEffect(() => {
-    let timer;
-    if (counter > 0 && !paused) {
-      timer = setInterval(() => {
-        setInputValue((prevCounter) => {
-          const newCounter = prevCounter - 1;
-          if (newCounter <= 0) {
-            clearInterval(timer);
-            return 0;
-          }
-          return newCounter;
-        });
-      }, 1000);
-    }
 
-    return () => clearInterval(timer);
-  }, [inputValue]);
 
   return (
     <>
@@ -65,89 +65,13 @@ function App() {
           value={inputValue}
           onChange={changeInput}
         />
-        <button type='submit'>Submit</button>
-        {/* <button onClick={handlePause}>{paused ? 'Resume' : 'Pause'}</button> */}
+        <button disabled={disable} type='submit'>Submit</button>
+        <button onClick={handlePause}>{
+          pausebtn ? "Resume" : "pause"
+        }</button>
       </form>
-
-      {/* <p>{counter}</p> */}
     </>
   );
 }
 
 export default App;
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { useEffect, useState } from 'react';
-// import './App.css';
-
-// function App() {
-//   const [inputValue, setInputValue] = useState('');
-//   const [counter, setCounter] = useState(0);
-
-//   function changeInput(e) {
-//     setInputValue(e.target.value);
-//   }
-
-//   function handleSubmit() {
-//     e.preventDefault();
-//     setCounter(inputValue);
-//     setInputValue();
-//   }
-
-  
-//   useEffect(() => {
-//     let timer;
-//     if (inputValue > 0) {
-//       timer = setInterval(() => {
-//         setCounter((prevCounter) => {
-//           const newCounter = prevCounter - 1;
-//           if (newCounter <= 0) {
-//             clearInterval(timer);
-//             return null;
-//           }
-//           return newCounter;
-//         });
-//       }, 1000); 
-//     }
-
-//     return () => clearInterval(timer);
-//   }, []);
-//   function handlePause(){
-    
-//   }
-
- 
-
-//   return (
-//     <>
-      
-//         <input
-//           type='number'
-//           placeholder='Enter Number'
-//           value={inputValue}
-//           onChange={changeInput}
-//         />
-//         <button onClick={handleSubmit}>Submit</button>
-//         <button onClick={handlePause}>pause</button>
-
- 
-
-     
-//     </>
-//   );
-// }
-
-// export default App;
-
-
