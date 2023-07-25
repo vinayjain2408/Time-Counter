@@ -1,58 +1,79 @@
-import {useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
   const [intervalId, setIntervalId] = useState(null);
-  const [pausebtn , setPausebtn] = useState(false)
-  const [disable , setDisable] = useState(false)
+  const [pausebtn, setPausebtn] = useState(false)
+  const [disable, setDisable] = useState(false)
 
   function changeInput(e) {
     setInputValue(parseInt(e.target.value));
   }
 
+
+
+
+
+  const runcounter=()=>{
+    let id = setInterval(() => {
+      console.log("vinay jain", id);
+      setInputValue((prevValue) =>
+      prevValue > 0 ? prevValue - 1 :
+      myStop(prevValue)
+      );
+    }, 1000);
+
+    return id
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-    
-    if (!intervalId && inputValue > 0 ) {
-      setDisable(true)
-      const id = setInterval(() => {
-        console.log("vinay jain")
-        setInputValue((prevValue) => (prevValue > 0 ? prevValue - 1 :  clearInterval(intervalId)));
-      }, 1000);
-      setIntervalId(id);
-      console.log(id)
+    if (inputValue > 0) {
+      setDisable(true);
+      runcounter()
     }
-    else  if( inputValue === 0){
-      setDisable(false)
-      
-      // clearInterval(inputValue)
-      clearInterval(id)
-
+    else if (inputValue === 0) {
+      setDisable(false);
+      console.log("VINAY")
+      clearInterval(runcounter());
+     
     }
-    
   }
+  function myStop(prevValue) {
+    if (prevValue == '0') {
+      setDisable(false);
+      console.log('abhimanyu', prevValue)
+      clearInterval(runcounter);
+    }
+    return false;
+  }
+
+
   function handlePause() {
-    if (intervalId && !pausebtn) { 
+    if (!pausebtn) {
       clearInterval(intervalId);
       setPausebtn(true);
-    } else if (inputValue > 0 && pausebtn) { 
+      console.log("resume")
+    } else if (inputValue > 0 && pausebtn) {
       const id = setInterval(() => {
         setInputValue((prevValue) => (prevValue > 0 ? prevValue - 1 : prevValue));
       }, 1000);
       setIntervalId(id);
       setPausebtn(false);
+      console.log("pause")
     }
   }
 
-    useEffect(() => {
-      return () => {
-        if(intervalId){
-          clearInterval(intervalId ,inputValue);
-        }
-       
-      };
-    }, [intervalId]);
+
+  // useEffect(() => {
+  //   return () => {
+  //     console.log("akash")
+  //     if (intervalId) {
+  //       clearInterval(intervalId);
+  //     }
+  //   };
+  // }, [intervalId]);
 
 
 
